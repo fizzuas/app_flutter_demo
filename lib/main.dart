@@ -1,83 +1,107 @@
 import 'package:flutter/material.dart';
+import 'package:english_words/english_words.dart';
+import 'Tabs.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new MyHome();
+    return new RandomWords();
   }
 }
 
-class MyHome extends StatefulWidget {
-  MyHome({Key key}) : super(key: key);
+class RandomWords extends StatefulWidget {
+  RandomWords({Key key}) : super(key: key);
 
   @override
-  _MyHomeState createState() => _MyHomeState();
+  _RandomWordsState createState() => _RandomWordsState();
 }
 
-class _MyHomeState extends State<MyHome> with TickerProviderStateMixin {
-  TabController _controller;
-  TextStyle style = TextStyle(fontSize: 40);
-  List<String> list = ["页面1", "页面2", "页面3"];
-
-  TextStyle bigStyle = TextStyle(fontSize: 20);
-  TextStyle smlStyle = TextStyle(fontSize: 14);
+class _RandomWordsState extends State<RandomWords> {
+  var wordPair = new WordPair.random();
+  final _suggestions = <WordPair>[];
+  final _biggerFont = const TextStyle(fontSize: 18.0);
+  List widgets =[];
 
   @override
   void initState() {
     super.initState();
-    _controller = new TabController(length: 3, vsync: this, initialIndex: 0);
+    _suggestions.addAll(generateWordPairs().take(5));
+    widgets.add(getRow(0));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: new MaterialApp(
+    return new MaterialApp(
       title: 'Welcome to Flutter',
       home: new Scaffold(
         appBar: new AppBar(
-          centerTitle: true,
-          title: Container(
-            padding: EdgeInsets.only(left: 15),
-            decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(60),),
-            child: TextField(
-              decoration: InputDecoration(
-                  icon: Icon(
-                Icons.search,
-                color: Colors.grey[500],),
-                border: InputBorder.none,
-              ),
-              textAlign: TextAlign.start,
-            ),
-          ),
-          bottom: TabBar(
-            labelPadding: EdgeInsets.symmetric(horizontal: 50),
-            controller: _controller,
-            tabs: list.map((e) => Text(e)).toList(),
-            isScrollable: false,
-            indicatorPadding: EdgeInsets.symmetric(horizontal: 80),
-            labelColor: Colors.white,
-            indicatorWeight: 2,
-            unselectedLabelStyle: smlStyle,
-            labelStyle: bigStyle,
-          ),
-//          leading: Icon(Icons.arrow_back),
+          title: new Text('My app'),
         ),
-        body: TabBarView(
-          controller: _controller,
-          children: list
-              .map((e) => Center(
-                    child: Text(
-                      e,
-                      style: style,
-                    ),
-                  ))
-              .toList(),
-        ),
+        body: _buildSuggestions(),
       ),
-    ));
+    );
+  }
+
+  Widget _buildSuggestions() {
+    return new ListView.builder(
+      itemCount: 2*widgets.length,
+      itemBuilder: (BuildContext context, int position) {
+        return getRow(position);
+      },
+      itemExtent: 50,
+    );
+  }
+
+  Widget getRow(int i) {
+    if(i.isOdd){
+      return new Divider();
+    }else{
+      return new GestureDetector(
+        child: new Container(
+          child:  Text.rich(
+            TextSpan(
+              // 必须设置一个父TextStyle 否则 字体是白色
+                style: TextStyle(
+                    color: Colors.black, fontWeight: FontWeight.bold),
+                text: "Text.rich 实现：      ",
+//                children: <TextSpan>[
+//                  TextSpan(
+//                      text: '绚丽',
+//                      style: TextStyle(
+//                          color: Colors.red,
+//                          fontWeight: FontWeight.normal)),
+//                  TextSpan(
+//                      text: '文本',
+//                      style: TextStyle(
+//                        fontWeight: FontWeight.bold,
+//                        color: Colors.blue,
+//                      )),
+//                  TextSpan(
+//                      text: '样式',
+//                      style: TextStyle(
+//                          fontStyle: FontStyle.italic,
+//                          color: Colors.black,
+//                          fontSize: 18,
+//                          decoration: TextDecoration.lineThrough,
+//                          fontWeight: FontWeight.normal)),
+//                ]
+            ),
+            style: TextStyle(height: 2),
+          ),
+
+
+
+        ),
+        onTap: (){
+          setState(() {
+            widgets.add(getRow(widgets.length + 1));
+            print('row $i');
+          });
+        },
+      );
+    }
+
   }
 }
