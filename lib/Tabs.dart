@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class MyHome extends StatefulWidget {
-  MyHome({Key key}) : super(key: key);
+class Tabs extends StatefulWidget {
+  Tabs({Key key}) : super(key: key);
 
   @override
-  _MyHomeState createState() => _MyHomeState();
+  _TabsState createState() => _TabsState();
 }
 
-class _MyHomeState extends State<MyHome> with TickerProviderStateMixin {
+class _TabsState extends State<Tabs> with TickerProviderStateMixin {
   TabController _controller;
   TextStyle style = TextStyle(fontSize: 40);
   List<String> list = ["页面1", "页面2", "页面3"];
@@ -47,7 +47,7 @@ class _MyHomeState extends State<MyHome> with TickerProviderStateMixin {
                 ),
               ),
               bottom: TabBar(
-                labelPadding: EdgeInsets.symmetric(horizontal: 50),
+                labelPadding: EdgeInsets.symmetric(horizontal: 5),
                 controller: _controller,
                 tabs: list.map((e) => Text(e)).toList(),
                 isScrollable: false,

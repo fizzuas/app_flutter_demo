@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class TitleSection extends StatelessWidget {
+class ColumnSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(

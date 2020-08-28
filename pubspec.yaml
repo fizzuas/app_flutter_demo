@@ -31,6 +31,11 @@ dependencies:
   english_words: ^3.1.0
 
 
+  #  install_plugin: ^2.0.1
+#  installplugin:
+
+
+
 
 
 dev_dependencies:
