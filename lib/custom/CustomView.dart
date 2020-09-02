@@ -46,26 +46,32 @@ class _CustomViewState extends State<CustomView> {
   }
 
   Future<ui.Image> getImage(String asset) async {
-    ByteData data = await rootBundle.load(asset);
-    print("length"+data.lengthInBytes.toString());
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-    FrameInfo fi = await codec.getNextFrame();
-    return fi.image;
+      ByteData data = await rootBundle.load(asset);
+      ui.Codec codec = await ui.instantiateImageCodec(
+          data.buffer.asUint8List());
+      FrameInfo fi = await codec.getNextFrame();
+      return fi.image;
   }
 }
 
 class _F021Paint extends CustomPainter {
-  Paint _paint = new Paint()..color = Colors.lightBlue;
+  Paint _paint = new Paint()
+    ..color = Colors.lightBlue;
   ui.Image img;
 
   _F021Paint(this.img);
+
   @override
   void paint(Canvas canvas, Size size) {
     // canvas.drawLine(Offset(0, 0), Offset(100, 100), _paint);
     // canvas.drawColor(Colors.black,BlendMode.colorBurn);
-    Rect src=Rect.fromLTWH(0,0,img.width.toDouble(),img.height.toDouble());
-    Rect dest=Rect.fromLTWH(0, 0, 300, 200);
-    canvas.drawImageRect(img,src,dest,_paint);
+    print("img==null" + (img == null).toString());
+    if (img != null) {
+      Rect src = Rect.fromLTWH(
+          0, 0, img.width.toDouble(), img.height.toDouble());
+      Rect dest = Rect.fromLTWH(0, 0, 357, 63);
+      canvas.drawImageRect(img, src, dest, _paint);
+    }
   }
 
   @override
