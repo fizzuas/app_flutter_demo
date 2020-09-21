@@ -19,58 +19,75 @@ class _TabsState extends State<Tabs> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller = new TabController(length: 3, vsync: this, initialIndex: 0);
+    // _controller.index=2;
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
         child: new MaterialApp(
-          title: 'Welcome to Flutter',
-          home: new Scaffold(
-            appBar: new AppBar(
-              centerTitle: true,
-              title: Container(
-                padding: EdgeInsets.only(left: 15),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(60),
-                ),
-                child: TextField(
-                  decoration: InputDecoration(
-                    icon: Icon(
-                      Icons.search,
-                      color: Colors.grey[500],
-                    ),
-                    border: InputBorder.none,
+      title: 'Welcome to Flutter',
+      home: new Scaffold(
+          appBar: new AppBar(
+            centerTitle: true,
+            title: Container(
+              padding: EdgeInsets.only(left: 15),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(60),
+              ),
+              child: TextField(
+                decoration: InputDecoration(
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.grey[500],
                   ),
-                  textAlign: TextAlign.start,
+                  border: InputBorder.none,
                 ),
+                textAlign: TextAlign.start,
               ),
-              bottom: TabBar(
-                labelPadding: EdgeInsets.symmetric(horizontal: 5),
-                controller: _controller,
-                tabs: list.map((e) => Text(e)).toList(),
-                isScrollable: false,
-                indicatorPadding: EdgeInsets.symmetric(horizontal: 80),
-                labelColor: Colors.white,
-                indicatorWeight: 2,
-                unselectedLabelStyle: smlStyle,
-                labelStyle: bigStyle,
-              ),
-//          leading: Icon(Icons.arrow_back),
             ),
-            body: TabBarView(
+            bottom: TabBar(
+              labelPadding: EdgeInsets.symmetric(horizontal: 5),
               controller: _controller,
-              children: list
-                  .map((e) => Center(
-                child: Text(
-                  e,
-                  style: style,
-                ),
-              ))
-                  .toList(),
+              tabs: list.map((e) => Text(e)).toList(),
+              isScrollable: false,
+              indicatorPadding: EdgeInsets.symmetric(horizontal: 80),
+              labelColor: Colors.white,
+              indicatorWeight: 2,
+              unselectedLabelStyle: smlStyle,
+              labelStyle: bigStyle,
             ),
+//          leading: Icon(Icons.arrow_back),
           ),
-        ));
+          body: Column(
+            children: <Widget>[
+              Expanded(
+                child: TabBarView(
+                  controller: _controller,
+                  physics: NeverScrollableScrollPhysics(),
+                  children: list
+                      .map((e) => Center(
+                            child: Text(
+                              e,
+                              style: style,
+                            ),
+                          ))
+                      .toList(),
+                ),
+              ),
+              Container(
+                height: 50,
+                child: FlatButton(
+                  color: Colors.grey,
+                  child: Text("BUT"),
+                  onPressed: () {
+                    _controller.index = (_controller.index + 1) % 3;
+                  },
+                ),
+              )
+            ],
+          )),
+    ));
   }
 }
