@@ -82,8 +82,8 @@ void onFlatButClick() {
 }
 
 _showDialogWithStatefulBuilder(BuildContext context) {
-  var progress = 0.0;
   StateSetter ss;
+  var progress = 0.0;
   Timer.periodic(Duration(milliseconds: 300), (timer) {
     progress += 0.1;
     if (ss != null) {

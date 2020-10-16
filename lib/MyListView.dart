@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:english_words/english_words.dart';
+// import 'package:english_words/english_words.dart';
 
 class MyListView extends StatefulWidget {
   MyListView({Key key}) : super(key: key);
@@ -17,7 +17,7 @@ class _MyListViewState extends State<MyListView> {
   @override
   void initState() {
     super.initState();
-    _suggestions.addAll(generateWordPairs().take(5));
+    // _suggestions.addAll(generateWordPairs().take(5));
     _widgets.add(_buildRow(0));
   }
 
@@ -81,7 +81,7 @@ class _MyListViewState extends State<MyListView> {
       if (i>= list.length) {
         // ...接着再生成10个单词对，然后添加到建议列表
         setState(() {
-          list.addAll(generateWordPairs().take(10));
+          // list.addAll(generateWordPairs().take(10));
 
         });
       }
