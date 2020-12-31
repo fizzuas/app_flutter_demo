@@ -1,19 +1,9 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'file:///C:/work/flutter/flutter_app/lib/ui/study/ColumnSection.dart';
-import 'file:///C:/work/flutter/flutter_app/lib/ui/study/GestureDemo.dart';
 import 'package:flutter_app/route/router.dart';
-import 'package:flutter_app/util/_constants.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
-import 'ui/study/ContainerDemo.dart';
-import 'ui/study/MyListView.dart';
-import 'ui/study/Tabs.dart';
+import 'package:flutter_app/route/router.dart'  ;
 
-import 'dialog/DialogProgress.dart';
-import 'dialog/DialogUpdateState.dart';
-import 'dialog/input_dialog.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver();
 
@@ -39,7 +29,7 @@ class MyState<MyApp> extends State {
       onGenerateRoute: (RouteSettings settings) {
         final String pageName = settings.name;
         print("pageName=$pageName");
-        final Function pageBuilder = Router.routes[pageName];
+        final Function pageBuilder = PagerRouter.routes[pageName];
         if (settings.arguments != null) {
           return MaterialPageRoute(
               settings: RouteSettings(name: pageName),
@@ -70,7 +60,7 @@ class Page extends StatelessWidget {
             margin: EdgeInsets.only(top: 25),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed(Router.stateManager);
+                Navigator.of(context).pushNamed(PagerRouter.stateManager);
               },
               child: Container(
                 width: ViewSizeUtils.getSize(343),
@@ -98,7 +88,7 @@ class Page extends StatelessWidget {
             margin: EdgeInsets.only(top: 25),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed(Router.pages);
+                Navigator.of(context).pushNamed(PagerRouter.pages);
               },
               child: Container(
                 width: ViewSizeUtils.getSize(343),
