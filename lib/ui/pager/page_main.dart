@@ -4,9 +4,9 @@ import 'package:flutter_app/base/_base_widget.dart';
 import 'package:flutter_app/ui/title/common_titleview.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
 
-import 'BusinessNewPage.dart';
-import 'HomePage.dart';
-import 'MePage.dart';
+import 'page_new_business.dart';
+import 'page_home.dart';
+import 'page_me.dart';
 import 'bean_home_menu.dart';
 
 class HomePager extends StatefulWidget {
