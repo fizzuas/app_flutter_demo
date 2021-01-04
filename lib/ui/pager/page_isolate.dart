@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/base/_constants.dart';
+import 'package:flutter_app/network/api.dart';
 import 'package:flutter_app/network/network_manager.dart';
 import 'package:flutter_app/provider/progress.dart';
 import 'package:flutter_app/provider/upgrade_Info.dart';
@@ -13,6 +14,8 @@ import 'package:flutter_app/util/view_size_utils.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:path/path.dart' as path;
 
 class PageIsolate extends StatefulWidget {
   @override
@@ -225,17 +228,16 @@ class _PageIsolateState extends State<PageIsolate> {
           ],
         ));
   }
-
-
 }
+
 void doSomething() {
   final ReceivePort resultPort = ReceivePort();
 
-  Isolate.spawn(threadTask, resultPort.sendPort).then( (isolate) {
+  Isolate.spawn(threadTask, resultPort.sendPort).then((isolate) {
     resultPort.listen((data) {
       print("$data, time:${DateTime.now()}"); //3.接收子线程的数据
-      resultPort.close();
-      isolate.kill();
+      // resultPort.close();
+      // isolate.kill();
     });
   });
 
@@ -245,4 +247,23 @@ void doSomething() {
 void threadTask(SendPort port) async {
   await Future.delayed(Duration(seconds: 5));
   port.send("Job's done"); //2.子线程完成任务，回报数据
+}
+
+void downloadDBTask(SendPort port) async {
+  String url = await UploadSystemModel().getDBUrL();
+  print("url=" + url);
+  // String date = url.split("/").last.split("-").last.split(".").first;
+  var dbPath = await getDatabasesPath();
+  var docFilePath = path.join(dbPath, dbName);
+
+  // Response response = await NetworkManager.shared().download(url, docFilePath,
+  //     showProgress: false,
+  //     completed: () {}, onReceiveProgress: (int received, int total) {
+  //   print("DB下载进度" + (received / total * 100).toStringAsFixed(0) + "%");
+  //   int progress = (received / total * 100).toInt();
+  // }, error: (String msg) {
+  //   print("error=" + msg);
+  // },
+  //     options: RequestOptions(
+  //         baseUrl: Api.keyMachineHost, receiveTimeout: 10 * 60 * 1000));
 }
