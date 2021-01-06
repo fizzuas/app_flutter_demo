@@ -1,3 +1,5 @@
+import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -12,10 +14,11 @@ import 'package:flutter_app/uplevel/model/uplevel_model.dart';
 import 'package:flutter_app/util/common_utils.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
 import 'package:oktoast/oktoast.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as path;
+import 'package:path/path.dart' as Path;
 
 class PageIsolate extends StatefulWidget {
   @override
@@ -23,6 +26,12 @@ class PageIsolate extends StatefulWidget {
 }
 
 class _PageIsolateState extends State<PageIsolate> {
+  @override
+  void initState() {
+    super.initState();
+    checkUpdate(context);
+  }
+
   Widget getIosStyleAppBar(BuildContext context, String title,
       {showBtIcon = true, showHomeIcon = true}) {
     return CupertinoNavigationBar(
@@ -177,9 +186,7 @@ class _PageIsolateState extends State<PageIsolate> {
 
   Widget getIsolateView() {
     return ListTile(
-        onTap: () async {
-          doSomething();
-        },
+        onTap: () async {},
         title: Text(
           "isolate",
           style: TextStyle(fontSize: ViewSizeUtils.setSp(14)),
@@ -193,22 +200,19 @@ class _PageIsolateState extends State<PageIsolate> {
           children: [
             Padding(
               padding: EdgeInsets.only(right: 16, left: 16),
-              child: Consumer(
-                builder:
-                    (BuildContext context, UpgradeInfo value, Widget child) {
-                  if (value.isBoxDbNeedUpgrade) {
-                    return new Icon(
-                      Icons.fiber_manual_record,
-                      size: 12,
-                      color: Colors.red,
-                    );
-                  } else {
-                    return new Icon(
-                      Icons.fiber_manual_record,
-                      size: 12,
-                      color: Colors.transparent,
-                    );
+              child: FutureBuilder(
+                future: UploadSystemModel().checkDBUpdate(),
+                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    if (snapshot.hasError) {
+                      return Text("");
+                    } else {
+                      if (snapshot.data) {
+                        return Text("");
+                      }
+                    }
                   }
+                  return Text("");
                 },
               ),
             ),
@@ -228,42 +232,82 @@ class _PageIsolateState extends State<PageIsolate> {
           ],
         ));
   }
-}
 
-void doSomething() {
-  final ReceivePort resultPort = ReceivePort();
+  // 创建一个新的 isolate
+// ignore: non_constant_identifier_names
+  Isolate isolate;
 
-  Isolate.spawn(threadTask, resultPort.sendPort).then((isolate) {
-    resultPort.listen((data) {
-      print("$data, time:${DateTime.now()}"); //3.接收子线程的数据
-      // resultPort.close();
-      // isolate.kill();
+  create_isolate() async {
+    final ReceivePort receivePort = ReceivePort();
+    // String dbPath = await getDatabasesPath();
+    // downloadDBPath = Path.join(dbPath, dbName);
+    isolate = await Isolate.spawn(threadTask, receivePort.sendPort);
+    receivePort.listen((data) {
+      String content = data as String;
+      print("$content, time:${DateTime.now()}"); //3.接收子线程的数据
+      if (content.startsWith("progress=")) {
+        print(data.toString());
+      } else if (content == "completed") {
+        print("completed!!");
+        receivePort.close();
+        isolate.kill(priority: Isolate.immediate);
+        isolate = null;
+      }else if(content.startsWith("error")){
+        receivePort.close();
+        isolate.kill(priority: Isolate.immediate);
+        isolate = null;
+      }
     });
-  });
+    print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
+  }
 
-  print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
+  void checkUpdate(BuildContext context) async {
+    bool permissionOK = true;
+    if (Platform.isAndroid) {
+      var status = await Permission.storage.status;
+      if (status.isUndetermined) {
+        permissionOK = await Permission.storage.request().isGranted;
+      } else {
+        permissionOK = await Permission.storage.isGranted;
+      }
+    }
+    bool needUpgrade = await UploadSystemModel().checkDBUpdate();
+    if (permissionOK && needUpgrade) {
+      String url = await UploadSystemModel().getDBUrL();
+      String date = url.split("/").last.split("-").last.split(".").first;
+      if (isolate == null) {
+        create_isolate();
+      }
+    }
+
+    print("pid_main=" + pid.toString());
+  }
 }
 
 void threadTask(SendPort port) async {
-  await Future.delayed(Duration(seconds: 5));
-  port.send("Job's done"); //2.子线程完成任务，回报数据
-}
+  print("pid=" + pid.toString());
+  String downloadUrl =
+      "http://www.kydz.online:8188/minidata/mini00-ful-202101051416.bin";
+  String downloadDBPath =
+      "/data/user/0/com.example.flutter_app/databases/ky_generator.db";
 
-void downloadDBTask(SendPort port) async {
-  String url = await UploadSystemModel().getDBUrL();
-  print("url=" + url);
-  // String date = url.split("/").last.split("-").last.split(".").first;
-  var dbPath = await getDatabasesPath();
-  var docFilePath = path.join(dbPath, dbName);
-
-  // Response response = await NetworkManager.shared().download(url, docFilePath,
-  //     showProgress: false,
-  //     completed: () {}, onReceiveProgress: (int received, int total) {
-  //   print("DB下载进度" + (received / total * 100).toStringAsFixed(0) + "%");
-  //   int progress = (received / total * 100).toInt();
-  // }, error: (String msg) {
-  //   print("error=" + msg);
-  // },
-  //     options: RequestOptions(
-  //         baseUrl: Api.keyMachineHost, receiveTimeout: 10 * 60 * 1000));
+  print("downloadUrl" + downloadUrl);
+  print("downloadDBPath" + downloadDBPath);
+  var dio = Dio();
+  try {
+    dio.download(
+      downloadUrl,
+      downloadDBPath,
+      onReceiveProgress: (int count, int total) {
+        // print("当前进度=" + (count / total * 100).toStringAsFixed(0) + "%");
+        port.send(
+            "progress=" + (count / total * 100).toStringAsFixed(0).toString());
+        if (count == total) {
+          port.send("completed"); //2.子线程完成任务，回报数据
+        }
+      },
+    );
+  } on Exception catch (e) {
+    print("error" + e.toString());
+  }
 }

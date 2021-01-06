@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/state_manager/state_manager.dart';
-import 'package:flutter_app/ui/pager/page_isolate.dart';
+import 'file:///C:/home/flutter/flutter_app/lib/isolate/page_isolate.dart';
 import 'package:flutter_app/ui/pager/page_main.dart';
 
 class PagerRouter {

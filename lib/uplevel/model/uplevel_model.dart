@@ -245,14 +245,14 @@ class UploadSystemModel {
     String date = await CommonUtils.get(Constants.DB_DATE_KEY,
         defaultValue: Constants.DB_DEFAULT);
     String boxId = Constants.BOX_ID;
-    print("getUrl" + ",date=" + date.toString());
+
     var envelope = '''
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <getDownloadUrl xmlns="http://www.autorke.cn/">
-      <boxId>${boxId}</boxId>
-      <localDataTime>${date}</localDataTime>
+      <boxId>MB4WPIP</boxId>
+      <localDataTime>202012211540</localDataTime>
     </getDownloadUrl>
   </soap:Body>
 </soap:Envelope>

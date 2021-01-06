@@ -191,20 +191,21 @@ class NetworkManager {
   }) async {
     try {
       bool networkUnavailable = await isNetworkUnavailable();
+      print("networkUnavailable"+networkUnavailable.toString());
       if (networkUnavailable) {
 
         return null;
       }
       bool permissOk = true;
-      if (Platform.isAndroid) {
-        var status = await Permission.storage.status;
-        if (status.isUndetermined) {
-          permissOk = await Permission.storage.request().isGranted;
-        } else {
-          permissOk = await Permission.storage.isGranted;
-        }
-        // permissOk = await PermissionUtils.checkPermiss([PermissionGroup.storage]);
-      }
+      // if (Platform.isAndroid) {
+      //   var status = await Permission.storage.status;
+      //   if (status.isUndetermined) {
+      //     permissOk = await Permission.storage.request().isGranted;
+      //   } else {
+      //     permissOk = await Permission.storage.isGranted;
+      //   }
+      //   // permissOk = await PermissionUtils.checkPermiss([PermissionGroup.storage]);
+      // }
       if (permissOk) {
         if (start != null) {
           start();
