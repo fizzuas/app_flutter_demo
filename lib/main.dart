@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/provider/db_progress.dart';
 import 'package:flutter_app/provider/progress.dart';
 import 'package:flutter_app/provider/upgrade_Info.dart';
 import 'package:flutter_app/route/router.dart';
@@ -9,6 +10,7 @@ import 'package:provider/provider.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver();
 final GlobalKey<NavigatorState> navigatorState = GlobalKey();
+BuildContext appContext;
 void main() {
   // Stetho.initialize();
   runApp(new MyAPP());
@@ -24,13 +26,16 @@ class MyAPP extends StatefulWidget {
 class MyState<MyApp> extends State {
   @override
   Widget build(BuildContext context) {
+
     return MultiProvider(
       providers:[
         ChangeNotifierProvider.value(value: Progress()),
+        ChangeNotifierProvider.value(value: DBProgress()),
         ChangeNotifierProvider.value(value: UpgradeInfo())
       ],
       child: OKToast(
         child: new MaterialApp(
+          navigatorKey: navigatorState,
           title: "ss",
           home: new Page(),
           // 路由拦截！

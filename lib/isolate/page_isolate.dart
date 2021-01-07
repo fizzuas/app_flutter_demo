@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/base/_constants.dart';
 import 'package:flutter_app/network/api.dart';
 import 'package:flutter_app/network/network_manager.dart';
+import 'package:flutter_app/provider/db_progress.dart';
 import 'package:flutter_app/provider/progress.dart';
 import 'package:flutter_app/provider/upgrade_Info.dart';
 import 'package:flutter_app/uplevel/model/uplevel_model.dart';
@@ -17,8 +18,10 @@ import 'package:oktoast/oktoast.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart' as Path;
+
+import '../main.dart';
+
+DBProgress dbProgressProvider;
 
 class PageIsolate extends StatefulWidget {
   @override
@@ -30,6 +33,18 @@ class _PageIsolateState extends State<PageIsolate> {
   void initState() {
     super.initState();
     checkUpdate(context);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dbProgressProvider = null;
+  }
+
+  @override
+  void deactivate() {
+    print("deactivate");
+    super.deactivate();
   }
 
   Widget getIosStyleAppBar(BuildContext context, String title,
@@ -95,7 +110,6 @@ class _PageIsolateState extends State<PageIsolate> {
                 showToast("升级成功");
                 //更新红点
                 context.read<UpgradeInfo>().boxDbUpgrade = false;
-                setState(() {});
               }
             }
           } else {
@@ -168,12 +182,14 @@ class _PageIsolateState extends State<PageIsolate> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 if (index == 0) {
-                  return getDBView();
+                  return getIsolateView();
+
+                  // return getDBView();
                 } else {
                   return getIsolateView();
                 }
               },
-              itemCount: 2,
+              itemCount: 1,
               separatorBuilder: (BuildContext context, int index) => Divider(
                 height: 0,
               ),
@@ -200,21 +216,7 @@ class _PageIsolateState extends State<PageIsolate> {
           children: [
             Padding(
               padding: EdgeInsets.only(right: 16, left: 16),
-              child: FutureBuilder(
-                future: UploadSystemModel().checkDBUpdate(),
-                builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    if (snapshot.hasError) {
-                      return Text("");
-                    } else {
-                      if (snapshot.data) {
-                        return Text("");
-                      }
-                    }
-                  }
-                  return Text("");
-                },
-              ),
+              child: getProgressView(),
             ),
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
@@ -235,27 +237,42 @@ class _PageIsolateState extends State<PageIsolate> {
 
   // 创建一个新的 isolate
 // ignore: non_constant_identifier_names
-  Isolate isolate;
+  static Isolate isolate;
 
   create_isolate() async {
     final ReceivePort receivePort = ReceivePort();
-    // String dbPath = await getDatabasesPath();
-    // downloadDBPath = Path.join(dbPath, dbName);
-    isolate = await Isolate.spawn(threadTask, receivePort.sendPort);
-    receivePort.listen((data) {
-      String content = data as String;
-      print("$content, time:${DateTime.now()}"); //3.接收子线程的数据
-      if (content.startsWith("progress=")) {
-        print(data.toString());
-      } else if (content == "completed") {
-        print("completed!!");
-        receivePort.close();
-        isolate.kill(priority: Isolate.immediate);
-        isolate = null;
-      }else if(content.startsWith("error")){
-        receivePort.close();
-        isolate.kill(priority: Isolate.immediate);
-        isolate = null;
+    String downloadUrl =
+        "http://www.kydz.online:8188/minidata/mini00-ful-202101051416.bin";
+    String downloadDBPath =
+        "/data/user/0/com.example.flutter_app/databases/ky_generator.db";
+
+    isolate = await Isolate.spawn(isolate_download_db, receivePort.sendPort);
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    receivePort.listen((msg) {
+      if (msg is SendPort) {
+        msg.send("downloadUrl=" + downloadUrl);
+        msg.send("downloadDBPath=" + downloadDBPath);
+      } else if (msg is String) {
+        print("main isolate receive \t" + msg); //3.接收子线程的数据
+        if (msg.startsWith("progress=")) {
+          //更新UI
+          int progress =
+              int.parse(msg.substring("progress=".length, msg.length));
+          prefs.setInt("DB_PROGRESS", progress);
+          if (dbProgressProvider != null &&
+              dbProgressProvider.progress < progress) {
+            dbProgressProvider.progress = progress == null ? 0 : progress;
+          }
+        } else if (msg == "completed") {
+          receivePort.close();
+          isolate.kill(priority: Isolate.immediate);
+          isolate = null;
+          print("isolate==null" + (isolate == null).toString());
+        } else if (msg.startsWith("error")) {
+          receivePort.close();
+          isolate.kill(priority: Isolate.immediate);
+          isolate = null;
+        }
       }
     });
     print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
@@ -279,35 +296,68 @@ class _PageIsolateState extends State<PageIsolate> {
         create_isolate();
       }
     }
+  }
 
-    print("pid_main=" + pid.toString());
+  getProgressView() {
+    dbProgressProvider = Provider.of<DBProgress>(context);
+    if (dbProgressProvider.progress > 0 && dbProgressProvider.progress < 100) {
+      return Text(
+        dbProgressProvider.progress.toString() + "%",
+        style: TextStyle(
+            color: Color.fromARGB(0xff, 0x61, 0x61, 0x61), fontSize: 14),
+      );
+    } else {
+      return Text("");
+    }
   }
 }
 
-void threadTask(SendPort port) async {
-  print("pid=" + pid.toString());
-  String downloadUrl =
-      "http://www.kydz.online:8188/minidata/mini00-ful-202101051416.bin";
-  String downloadDBPath =
-      "/data/user/0/com.example.flutter_app/databases/ky_generator.db";
+// ignore: non_constant_identifier_names
+void isolate_download_db(SendPort mainPort) {
+  final taskPort = ReceivePort();
+  mainPort.send(taskPort.sendPort);
+  String downloadUrl = "";
+  String downloadDBPath = "";
+  taskPort.listen((message) {
+    print("isolate_download_db receive\t" + message);
+    if (message is String) {
+      if (message.startsWith("downloadUrl=")) {
+        downloadUrl = message.substring("downloadUrl=".length, message.length);
+      } else if (message.startsWith("downloadDBPath=")) {
+        downloadDBPath =
+            message.substring("downloadDBPath=".length, message.length);
+      }
+      if (downloadUrl.isNotEmpty && downloadDBPath.isNotEmpty) {
+        downloadDB(downloadUrl, downloadDBPath, mainPort);
+      }
+    }
+  });
+}
 
-  print("downloadUrl" + downloadUrl);
-  print("downloadDBPath" + downloadDBPath);
+void downloadDB(String downloadUrl, String downloadDBPath, SendPort mainPort) {
   var dio = Dio();
+  int last = 0;
+  bool flag = true;
   try {
     dio.download(
       downloadUrl,
       downloadDBPath,
       onReceiveProgress: (int count, int total) {
         // print("当前进度=" + (count / total * 100).toStringAsFixed(0) + "%");
-        port.send(
-            "progress=" + (count / total * 100).toStringAsFixed(0).toString());
-        if (count == total) {
-          port.send("completed"); //2.子线程完成任务，回报数据
+        // ignore: unrelated_type_equality_checks
+        int progress = int.parse((count / total * 100).toStringAsFixed(0));
+        if (progress > last) {
+          mainPort.send("progress=" + progress.toString());
+          last = progress;
+        }
+        if (count == total && flag) {
+          mainPort.send("completed"); //2.子线程完成任务，回报数据
+          flag = false;
         }
       },
     );
-  } on Exception catch (e) {
-    print("error" + e.toString());
+  } catch (e) {
+    print("isolate_download_db\t error" + e.toString());
+    mainPort.send("error=" + e.toString());
   }
 }
