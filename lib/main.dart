@@ -5,6 +5,7 @@ import 'package:flutter_app/provider/upgrade_Info.dart';
 import 'package:flutter_app/route/router.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
 import 'package:flutter_app/route/router.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 
@@ -53,6 +54,15 @@ class MyState<MyApp> extends State {
                   settings: RouteSettings(name: pageName),
                   builder: (context) => pageBuilder(context));
             }
+          },
+          builder: (BuildContext context, Widget child) {
+            /// make sure that loading can be displayed in front of all other widgets
+            return Material(
+              type: MaterialType.transparency,
+              child: FlutterEasyLoading(
+                child: child,
+              ),
+            );
           },
         ),
       ),
@@ -131,7 +141,7 @@ class Page extends StatelessWidget {
             margin: EdgeInsets.only(top: 25),
             child: InkWell(
               onTap: () {
-                Navigator.of(context).pushNamed(PagerRouter.threadUpdate);
+                Navigator.of(context).pushNamed(PagerRouter.threadUpdate1);
               },
               child: Container(
                 width: ViewSizeUtils.getSize(343),
@@ -154,6 +164,7 @@ class Page extends StatelessWidget {
               ),
             ),
           ),
+
         ],
       ),
     );

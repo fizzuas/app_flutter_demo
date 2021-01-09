@@ -45,12 +45,10 @@ dependencies:
   permission_handler: ^5.0.1+1
   path_provider: ^1.6.5
   # Network
-  dio: ^3.0.9
+  dio: ^3.0.10
   http: ^0.12.2
   package_info: ^0.4.3+2
   connectivity: ^2.0.2
-
-
 
 
 

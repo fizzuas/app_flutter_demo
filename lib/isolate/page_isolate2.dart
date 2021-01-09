@@ -21,24 +21,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
 
-DBProgress dbProgressProvider;
 
-class PageIsolate extends StatefulWidget {
+class PageIsolate2 extends StatefulWidget {
   @override
-  _PageIsolateState createState() => _PageIsolateState();
+  _PageIsolate2State createState() => _PageIsolate2State();
 }
 
-class _PageIsolateState extends State<PageIsolate> {
+class _PageIsolate2State extends State<PageIsolate2> {
+  DBProgress _dbProgressProvider;
   @override
   void initState() {
     super.initState();
-    checkUpdate(context);
+
   }
 
   @override
   void dispose() {
     super.dispose();
-    dbProgressProvider = null;
   }
 
   @override
@@ -172,6 +171,7 @@ class _PageIsolateState extends State<PageIsolate> {
 
   @override
   Widget build(BuildContext context) {
+    _dbProgressProvider = Provider.of<DBProgress>(context);
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       navigationBar: getIosStyleAppBar(context, "设置"),
@@ -183,7 +183,6 @@ class _PageIsolateState extends State<PageIsolate> {
               itemBuilder: (context, index) {
                 if (index == 0) {
                   return getIsolateView();
-
                   // return getDBView();
                 } else {
                   return getIsolateView();
@@ -235,74 +234,10 @@ class _PageIsolateState extends State<PageIsolate> {
         ));
   }
 
-  // 创建一个新的 isolate
-// ignore: non_constant_identifier_names
-  static Isolate isolate;
-
-  create_isolate() async {
-    final ReceivePort receivePort = ReceivePort();
-    String downloadUrl =
-        "http://www.kydz.online:8188/minidata/mini00-ful-202101051416.bin";
-    String downloadDBPath =
-        "/data/user/0/com.example.flutter_app/databases/ky_generator.db";
-
-    isolate = await Isolate.spawn(isolate_download_db, receivePort.sendPort);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    receivePort.listen((msg) {
-      if (msg is SendPort) {
-        msg.send("downloadUrl=" + downloadUrl);
-        msg.send("downloadDBPath=" + downloadDBPath);
-      } else if (msg is String) {
-        print("main isolate receive \t" + msg); //3.接收子线程的数据
-        if (msg.startsWith("progress=")) {
-          //更新UI
-          int progress =
-              int.parse(msg.substring("progress=".length, msg.length));
-          prefs.setInt("DB_PROGRESS", progress);
-          if (dbProgressProvider != null &&
-              dbProgressProvider.progress < progress) {
-            dbProgressProvider.progress = progress == null ? 0 : progress;
-          }
-        } else if (msg == "completed") {
-          receivePort.close();
-          isolate.kill(priority: Isolate.immediate);
-          isolate = null;
-          print("isolate==null" + (isolate == null).toString());
-        } else if (msg.startsWith("error")) {
-          receivePort.close();
-          isolate.kill(priority: Isolate.immediate);
-          isolate = null;
-        }
-      }
-    });
-    print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
-  }
-
-  void checkUpdate(BuildContext context) async {
-    bool permissionOK = true;
-    if (Platform.isAndroid) {
-      var status = await Permission.storage.status;
-      if (status.isUndetermined) {
-        permissionOK = await Permission.storage.request().isGranted;
-      } else {
-        permissionOK = await Permission.storage.isGranted;
-      }
-    }
-    bool needUpgrade = await UploadSystemModel().checkDBUpdate();
-    if (permissionOK && needUpgrade) {
-      String url = await UploadSystemModel().getDBUrL();
-      String date = url.split("/").last.split("-").last.split(".").first;
-      if (isolate == null) {
-        create_isolate();
-      }
-    }
-  }
-
   getProgressView() {
-    dbProgressProvider = Provider.of<DBProgress>(context);
-    if (dbProgressProvider.progress > 0 && dbProgressProvider.progress < 100) {
+    if (_dbProgressProvider.progress > 0 && _dbProgressProvider.progress < 100) {
       return Text(
-        dbProgressProvider.progress.toString() + "%",
+        _dbProgressProvider.progress.toString() + "%",
         style: TextStyle(
             color: Color.fromARGB(0xff, 0x61, 0x61, 0x61), fontSize: 14),
       );
@@ -312,52 +247,6 @@ class _PageIsolateState extends State<PageIsolate> {
   }
 }
 
-// ignore: non_constant_identifier_names
-void isolate_download_db(SendPort mainPort) {
-  final taskPort = ReceivePort();
-  mainPort.send(taskPort.sendPort);
-  String downloadUrl = "";
-  String downloadDBPath = "";
-  taskPort.listen((message) {
-    print("isolate_download_db receive\t" + message);
-    if (message is String) {
-      if (message.startsWith("downloadUrl=")) {
-        downloadUrl = message.substring("downloadUrl=".length, message.length);
-      } else if (message.startsWith("downloadDBPath=")) {
-        downloadDBPath =
-            message.substring("downloadDBPath=".length, message.length);
-      }
-      if (downloadUrl.isNotEmpty && downloadDBPath.isNotEmpty) {
-        downloadDB(downloadUrl, downloadDBPath, mainPort);
-      }
-    }
-  });
-}
 
-void downloadDB(String downloadUrl, String downloadDBPath, SendPort mainPort) {
-  var dio = Dio();
-  int last = 0;
-  bool flag = true;
-  try {
-    dio.download(
-      downloadUrl,
-      downloadDBPath,
-      onReceiveProgress: (int count, int total) {
-        // print("当前进度=" + (count / total * 100).toStringAsFixed(0) + "%");
-        // ignore: unrelated_type_equality_checks
-        int progress = int.parse((count / total * 100).toStringAsFixed(0));
-        if (progress > last) {
-          mainPort.send("progress=" + progress.toString());
-          last = progress;
-        }
-        if (count == total && flag) {
-          mainPort.send("completed"); //2.子线程完成任务，回报数据
-          flag = false;
-        }
-      },
-    );
-  } catch (e) {
-    print("isolate_download_db\t error" + e.toString());
-    mainPort.send("error=" + e.toString());
-  }
-}
+
+

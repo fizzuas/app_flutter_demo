@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class DBProgress extends ChangeNotifier {
+  String _version = "";
   int _progress = 0;
 
   set progress(int progress) {
@@ -9,4 +10,9 @@ class DBProgress extends ChangeNotifier {
   }
 
   int get progress => _progress;
+
+  set version(String version) {
+    _version = version;
+    notifyListeners();
+  }
 }

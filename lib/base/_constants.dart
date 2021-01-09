@@ -36,7 +36,11 @@ class Constants {
 
   //小盒子数据库
   static const String DB_DEFAULT = "202012211540";
+  //APP使用小盒子DB 版本
   static const String DB_DATE_KEY = "db_date";
+  //APP小盒子数据库下载版本
+  static const String DB_DATE_KEY_DOWNLOAD = "db_date_download";
+
   static const String BOX_ID = "MB4WPIP";
 
   //当前使用的boxId

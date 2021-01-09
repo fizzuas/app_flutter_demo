@@ -1,4 +1,4 @@
- import 'dart:io';
+import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -22,10 +22,8 @@ import 'package:xml/xml.dart' as xml;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:path/path.dart';
 
-
-
- const String dbName = "ky_generator.db";
-
+const String dbName = "ky_generator.db";
+const String dbNameDownload = "ky_generator_download.db";
 
 class UploadSystemModel {
   Future<int> downloadUrl(
@@ -105,7 +103,7 @@ class UploadSystemModel {
           parameters: {"param": encrypt},
           options: RequestOptions(
               // baseUrl:
-                  // "http://47.111.177.58:9110/WebServices/AppUpdateWebService.svc/",
+              // "http://47.111.177.58:9110/WebServices/AppUpdateWebService.svc/",
               baseUrl:
                   "http://www.autorke.cn:9110/WebServices/AppUpdateWebService.svc/",
               receiveTimeout: 10 * 1000),
@@ -192,6 +190,11 @@ class UploadSystemModel {
 
   /// 小盒子DB 检查 更新  SOAP 通信
   Future<bool> checkDBUpdate() async {
+    bool networkUnavailable = await isNetworkUnavailable();
+    if (networkUnavailable) {
+      EasyLoading.showError("网络访问错误");
+      return false;
+    }
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String date =
         prefs.getString(Constants.DB_DATE_KEY) ?? Constants.DB_DEFAULT;
@@ -208,17 +211,18 @@ class UploadSystemModel {
   </soap:Body>
 </soap:Envelope>
 ''';
+    // var client = http.Client();
     http.Response response;
-
     try {
-      response =
-          await http.post('http://www.kydz.online:8188/KYDZMiniWebService.asmx',
+      response = await http
+          .post('http://www.kydz.online:8188/KYDZMiniWebService.asmx',
               headers: {
                 "Content-Type": "text/xml; charset=utf-8",
                 "SOAPAction": "http://www.autorke.cn/checkDataUpdate",
                 "Host": "www.kydz.online"
               },
-              body: envelope);
+              body: envelope)
+          .timeout(Duration(milliseconds: 1000 * 5));
     } on Exception catch (e) {
       print(e.toString());
       return false;
@@ -232,14 +236,14 @@ class UploadSystemModel {
       print(needUpdate.toString());
       return needUpdate;
     }
+    // client.close();
     return false;
   }
 
   Future<String> getDBUrL() async {
     bool networkUnavailable = await isNetworkUnavailable();
     if (networkUnavailable) {
-      EasyLoading.showError(
-          "网络访问错误");
+      EasyLoading.showError("网络访问错误");
       return null;
     }
     String date = await CommonUtils.get(Constants.DB_DATE_KEY,
