@@ -24,6 +24,7 @@ import 'package:path/path.dart';
 
 const String dbName = "ky_generator.db";
 const String dbNameDownload = "ky_generator_download.db";
+const String dbNameDownload2 = "ky_generator_download2.db";
 
 class UploadSystemModel {
   Future<int> downloadUrl(

@@ -10,10 +10,13 @@ typedef Error = void Function(String msg);
 typedef Progress = void Function(int porgress);
 
 Future<String> isolateDownload(String downloadUrl, String downloadDBPath,
-    {Completed completed, Error error, Progress progressCallback}) async {
+    {String taskName,
+    Completed completed,
+    Error error,
+    Progress progressCallback}) async {
   final ReceivePort receivePort = ReceivePort();
   Isolate isolateDownload =
-      await Isolate.spawn(isolateDownloadDb, receivePort.sendPort);
+      await Isolate.spawn(_isolateDownload, receivePort.sendPort);
   receivePort.listen((msg) {
     if (msg is SendPort) {
       msg.send("downloadUrl=" + downloadUrl);
@@ -43,12 +46,13 @@ Future<String> isolateDownload(String downloadUrl, String downloadDBPath,
     }
   });
   print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
-  String taskID = DateTime.now().toString();
-  tasks[taskID]=isolateDownload;
+  String taskID =
+      ((taskName == null ? "" : taskName) + DateTime.now().toString());
+  tasks[taskID] = isolateDownload;
   return taskID;
 }
 
-void isolateDownloadDb(SendPort mainPort) {
+void _isolateDownload(SendPort mainPort) {
   final taskPort = ReceivePort();
   mainPort.send(taskPort.sendPort);
   String downloadUrl = "";
