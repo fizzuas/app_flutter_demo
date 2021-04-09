@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
-
 import '../main.dart';
+
 //flutter packages pub run build_runner build --delete-conflicting-outputs
-abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with RouteAware
-{
+abstract class BaseWidgetState<T extends StatefulWidget> extends State<T>
+    with RouteAware {
   @override
   void initState() {
     print(" BaseWidgetState=${this.context.widget}");
@@ -21,9 +21,8 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with R
 
   @override
   void didPopNext() {
-    print(this.toString()+"=didPopNext");
+    print(this.toString() + "=didPopNext");
     super.didPopNext();
-
   }
 
   @override
@@ -42,15 +41,16 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T> with R
   @override
   Widget build(BuildContext context) {
     return Material(
-       child:Scaffold(
-       backgroundColor: Colors.white,
-        appBar: initTitleView(),
-        body: SafeArea(
-            child: Column(
-              children: [
-                setPageLayout(context),
-              ],
-            )),resizeToAvoidBottomPadding: false,));
+        child: Scaffold(
+      backgroundColor: Colors.white,
+      appBar: initTitleView(),
+      body: SafeArea(
+          child: Column(
+        children: [
+          setPageLayout(context),
+        ],
+      )),
+      // resizeToAvoidBottomPadding: false,
+    ));
   }
-
 }
