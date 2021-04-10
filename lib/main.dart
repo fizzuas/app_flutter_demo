@@ -164,7 +164,34 @@ class Page extends StatelessWidget {
               ),
             ),
           ),
-
+          Container(
+            alignment: Alignment.center,
+            margin: EdgeInsets.only(top: 25),
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed(PagerRouter.inputText);
+              },
+              child: Container(
+                width: ViewSizeUtils.getSize(343),
+                height: ViewSizeUtils.getSize(42),
+                alignment: Alignment.center,
+                child: Text(
+                  "输入框",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
+                  ),
+                ),
+                decoration: new BoxDecoration(
+                  //设置四周圆角
+                  borderRadius: BorderRadius.all(Radius.circular(21)),
+                  //设置四周边框
+                  border: new Border.all(
+                      width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

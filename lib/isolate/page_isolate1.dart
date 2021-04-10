@@ -5,7 +5,7 @@ import 'package:flutter_app/isolate/isolate_download.dart';
 import 'package:flutter_app/provider/db_progress.dart';
 import 'package:flutter_app/route/router.dart';
 import 'package:flutter_app/uplevel/model/uplevel_model.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
@@ -25,6 +25,7 @@ class _PageIsolateState extends State<PageIsolate> {
   void initState() {
     super.initState();
     print("initState");
+    checkUpdate();
     checkUpdate();
   }
 
@@ -52,14 +53,14 @@ class _PageIsolateState extends State<PageIsolate> {
     if (downloadBoxDBTaskID == null ||
         !tasks.containsKey(downloadBoxDBTaskID)) {
       bool permissionOK = true;
-      if (Platform.isAndroid) {
-        var status = await Permission.storage.status;
-        if (status.isUndetermined) {
-          permissionOK = await Permission.storage.request().isGranted;
-        } else {
-          permissionOK = await Permission.storage.isGranted;
-        }
-      }
+      // if (Platform.isAndroid) {
+      //   var status = await Permission.storage.status;
+      //   if (status.isGranted) {
+      //     permissionOK = await Permission.storage.request().isGranted;
+      //   } else {
+      //     permissionOK = await Permission.storage.isGranted;
+      //   }
+      // }
       bool needUpgrade = await UploadSystemModel().checkDBUpdate();
       if (permissionOK && needUpgrade) {
         String url = await UploadSystemModel().getDBUrL();

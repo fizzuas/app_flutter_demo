@@ -16,7 +16,7 @@ import 'package:flutter_app/network/model/base_model.dart';
 import 'package:flutter_app/network/network_connectivity.dart';
 import 'package:flutter_app/network/response_code.dart';
 import 'package:oktoast/oktoast.dart';
-import 'package:permission_handler/permission_handler.dart';
+// import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 
