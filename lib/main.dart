@@ -80,119 +80,42 @@ class Page extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 25),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(PagerRouter.stateManager);
-              },
-              child: Container(
-                width: ViewSizeUtils.getSize(343),
-                height: ViewSizeUtils.getSize(42),
-                alignment: Alignment.center,
-                child: Text(
-                  "状态管理",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
-                  ),
-                ),
-                decoration: new BoxDecoration(
-                  //设置四周圆角
-                  borderRadius: BorderRadius.all(Radius.circular(21)),
-                  //设置四周边框
-                  border: new Border.all(
-                      width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 25),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(PagerRouter.pages);
-              },
-              child: Container(
-                width: ViewSizeUtils.getSize(343),
-                height: ViewSizeUtils.getSize(42),
-                alignment: Alignment.center,
-                child: Text(
-                  "PageView",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
-                  ),
-                ),
-                decoration: new BoxDecoration(
-                  //设置四周圆角
-                  borderRadius: BorderRadius.all(Radius.circular(21)),
-                  //设置四周边框
-                  border: new Border.all(
-                      width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 25),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(PagerRouter.threadUpdate1);
-              },
-              child: Container(
-                width: ViewSizeUtils.getSize(343),
-                height: ViewSizeUtils.getSize(42),
-                alignment: Alignment.center,
-                child: Text(
-                  "子线程下载",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
-                  ),
-                ),
-                decoration: new BoxDecoration(
-                  //设置四周圆角
-                  borderRadius: BorderRadius.all(Radius.circular(21)),
-                  //设置四周边框
-                  border: new Border.all(
-                      width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
-                ),
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.center,
-            margin: EdgeInsets.only(top: 25),
-            child: InkWell(
-              onTap: () {
-                Navigator.of(context).pushNamed(PagerRouter.inputText);
-              },
-              child: Container(
-                width: ViewSizeUtils.getSize(343),
-                height: ViewSizeUtils.getSize(42),
-                alignment: Alignment.center,
-                child: Text(
-                  "输入框",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
-                  ),
-                ),
-                decoration: new BoxDecoration(
-                  //设置四周圆角
-                  borderRadius: BorderRadius.all(Radius.circular(21)),
-                  //设置四周边框
-                  border: new Border.all(
-                      width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
-                ),
-              ),
-            ),
-          ),
+          _getItem(context,"状态管理",PagerRouter.stateManager),
+          _getItem(context,"PageView",PagerRouter.pages),
+          _getItem(context,"子线程下载",PagerRouter.threadUpdate1),
+          _getItem(context,"输入框",PagerRouter.inputText),
         ],
+      ),
+    );
+  }
+
+  _getItem(BuildContext context,String name, String pushName) {
+    return Container(
+      alignment: Alignment.center,
+      margin: EdgeInsets.only(top: 25),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).pushNamed(pushName);
+        },
+        child: Container(
+          width: ViewSizeUtils.getSize(343),
+          height: ViewSizeUtils.getSize(42),
+          alignment: Alignment.center,
+          child: Text(
+            name,
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff),
+            ),
+          ),
+          decoration: new BoxDecoration(
+            //设置四周圆角
+            borderRadius: BorderRadius.all(Radius.circular(21)),
+            //设置四周边框
+            border: new Border.all(
+                width: 1, color: Color.fromARGB(0xff, 0x05, 0x7c, 0xff)),
+          ),
+        ),
       ),
     );
   }

@@ -42,15 +42,17 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T>
   Widget build(BuildContext context) {
     return Material(
         child: Scaffold(
-      backgroundColor: Colors.white,
-      appBar: initTitleView(),
-      body: SafeArea(
-          child: Column(
-        children: [
-          setPageLayout(context),
-        ],
-      )),
-      // resizeToAvoidBottomPadding: false,
-    ));
+          backgroundColor: Colors.white,
+          appBar: initTitleView(),
+          body: SafeArea(
+              child: Column(
+                children: [
+                  setPageLayout(context),
+                ],
+              )
+              ),
+          resizeToAvoidBottomPadding: true,
+        ),
+       );
   }
 }

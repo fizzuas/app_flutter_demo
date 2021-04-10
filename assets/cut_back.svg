@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>切片</title>
+    <defs>
+        <filter id="filter-1">
+            <feColorMatrix in="SourceGraphic" type="matrix" values="0 0 0 0 0.164289 0 0 0 0 0.164289 0 0 0 0 0.164289 0 0 0 1.000000 0"></feColorMatrix>
+        </filter>
+        <polygon id="path-2" points="0.0005 0.0004 16 0.0004 16 16 0.0005 16"></polygon>
+    </defs>
+    <g id="❎生成器" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.359738372">
+        <g id="🥶特殊功能-智能感应信号强度调整" transform="translate(-88.000000, -516.000000)">
+            <g id="编组-2" transform="translate(88.000000, 498.000000)">
+                <g id="编组" transform="translate(0.000000, 18.000000)" filter="url(#filter-1)">
+                    <g transform="translate(4.000000, 4.000000)">
+                        <mask id="mask-3" fill="white">
+                            <use xlink:href="#path-2"></use>
+                        </mask>
+                        <g id="Clip-2"></g>
+                        <path d="M10.8625,7.1704 C11.3205,7.1704 11.6925,7.5424 11.6925,8.0004 C11.6925,8.4584 11.3205,8.8294 10.8625,8.8294 L5.1375,8.8294 C4.6795,8.8294 4.3075,8.4584 4.3075,8.0004 C4.3075,7.5424 4.6795,7.1704 5.1375,7.1704 L10.8625,7.1704 Z M8.0005,0.0004 C3.5815,0.0004 0.0005,3.5814 0.0005,8.0004 C0.0005,12.4184 3.5815,16.0004 8.0005,16.0004 C12.4185,16.0004 16.0005,12.4184 16.0005,8.0004 C16.0005,3.5814 12.4185,0.0004 8.0005,0.0004 L8.0005,0.0004 Z" id="Fill-1" fill="#000000" mask="url(#mask-3)"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
