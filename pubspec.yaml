@@ -49,6 +49,8 @@ dependencies:
   http: ^0.12.2
   package_info: ^0.4.3+2
   connectivity: ^2.0.2
+  flutter_svg: ^0.19.1
+  geolocator: ^6.2.0
 
 
 
@@ -57,6 +59,8 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  json_serializable: ^3.2.0
+  build_runner: ^1.6.5 # 用于自动生成代码
 
 
 flutter:
@@ -64,5 +68,6 @@ flutter:
   assets:
     - images/
     - images/3.0x/
+    - assets/
 
 

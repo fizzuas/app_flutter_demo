@@ -19,7 +19,6 @@ import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../main.dart';
 
 
 class PageIsolate2 extends StatefulWidget {
@@ -28,11 +27,10 @@ class PageIsolate2 extends StatefulWidget {
 }
 
 class _PageIsolate2State extends State<PageIsolate2> {
-  DBProgress _dbProgressProvider;
+  AppProgress _dbProgressProvider;
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
@@ -171,7 +169,7 @@ class _PageIsolate2State extends State<PageIsolate2> {
 
   @override
   Widget build(BuildContext context) {
-    _dbProgressProvider = Provider.of<DBProgress>(context);
+    _dbProgressProvider = Provider.of<AppProgress>(context);
     return CupertinoPageScaffold(
       backgroundColor: Colors.white,
       navigationBar: getIosStyleAppBar(context, "设置"),

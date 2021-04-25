@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class DBProgress extends ChangeNotifier {
+class AppProgress extends ChangeNotifier {
   String _version = "";
   int _progress = 0;
 

@@ -4,7 +4,6 @@ import 'package:flutter_app/provider/progress.dart';
 import 'package:flutter_app/provider/upgrade_Info.dart';
 import 'package:flutter_app/route/router.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
-import 'package:flutter_app/route/router.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:provider/provider.dart';
@@ -31,11 +30,12 @@ class MyState<MyApp> extends State {
     return MultiProvider(
       providers:[
         ChangeNotifierProvider.value(value: Progress()),
-        ChangeNotifierProvider.value(value: DBProgress()),
+        ChangeNotifierProvider.value(value: AppProgress()),
         ChangeNotifierProvider.value(value: UpgradeInfo())
       ],
       child: OKToast(
         child: new MaterialApp(
+          routes: PagerRouter.routes,
           navigatorKey: navigatorState,
           title: "ss",
           home: new Page(),
@@ -84,6 +84,11 @@ class Page extends StatelessWidget {
           _getItem(context,"PageView",PagerRouter.pages),
           _getItem(context,"子线程下载",PagerRouter.threadUpdate1),
           _getItem(context,"输入框",PagerRouter.inputText),
+          _getItem(context,"定位",PagerRouter.location),
+          _getItem(context,"seekbar",PagerRouter.slider),
+          _getItem(context,"序列化",PagerRouter.serial),
+          _getItem(context,"alert",PagerRouter.alert),
+          _getItem(context,"pres列表",PagerRouter.pres),
         ],
       ),
     );

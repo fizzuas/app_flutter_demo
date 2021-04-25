@@ -14,9 +14,16 @@ Future<String> isolateDownload(String downloadUrl, String downloadDBPath,
     Completed completed,
     Error error,
     Progress progressCallback}) async {
+
+
   final ReceivePort receivePort = ReceivePort();
   Isolate isolateDownload =
       await Isolate.spawn(_isolateDownload, receivePort.sendPort);
+
+  String taskID =
+  ((taskName == null ? "" : taskName) + DateTime.now().toString());
+  tasks[taskID] = isolateDownload;
+
   receivePort.listen((msg) {
     if (msg is SendPort) {
       msg.send("downloadUrl=" + downloadUrl);
@@ -35,6 +42,7 @@ Future<String> isolateDownload(String downloadUrl, String downloadDBPath,
         if (completed != null) {
           completed();
         }
+        tasks.remove(taskID);
       } else if (msg.startsWith("error=")) {
         receivePort?.close();
         isolateDownload?.kill(priority: Isolate.immediate);
@@ -42,13 +50,13 @@ Future<String> isolateDownload(String downloadUrl, String downloadDBPath,
           error(msg);
         }
         isolateDownload = null;
+        tasks.remove(taskID);
+
       }
     }
   });
   print("Job's requested, time:${DateTime.now()}"); //1.主线程不等待
-  String taskID =
-      ((taskName == null ? "" : taskName) + DateTime.now().toString());
-  tasks[taskID] = isolateDownload;
+
   return taskID;
 }
 
