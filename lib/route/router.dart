@@ -9,6 +9,8 @@ import 'package:flutter_app/ui/location/page_location.dart';
 import 'package:flutter_app/ui/menu/page_main.dart';
 import 'package:flutter_app/ui/menu/page_slider.dart';
 import 'package:flutter_app/ui/pres/Pres.dart';
+import 'package:flutter_app/ui/serial/page_series.dart';
+import 'package:flutter_app/ui/shader/page_shader.dart';
 
 class PagerRouter {
   static const String stateManager = '/stateManager';
@@ -21,16 +23,18 @@ class PagerRouter {
   static const String serial = '/serial';
   static const String alert = '/alert';
   static const String pres = '/pres';
+  static const String shader = '/shader';
   static final Map<String, WidgetBuilder> routes = {
     stateManager: (context) => StateManager(),
     pages: (context) => HomePager(),
     threadUpdate1: (context) => PageIsolate(),
     threadUpdate2: (context) => PageIsolate2(),
-    inputText: (context) =>SignalAdjustPage(),
+    inputText: (context) =>PageSignalAdjust(),
     location:(context) =>GeoLocatorWidget(),
-    slider:(context) =>SliderBarPage(),
-    serial:(context) => GeoLocatorWidget(),
+    slider:(context) =>PageSliderBarPage(),
+    serial:(context) => PageSeries(),
     alert:(context) => PageAlert(),
-    pres:(context) => Pres(),
+    pres:(context) => PagePres(),
+    shader:(context)=>PageShader()
   };
 }

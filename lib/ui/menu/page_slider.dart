@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 
 /// This is the main application widget.
-class SliderBarPage extends StatelessWidget {
-  const SliderBarPage({Key key}) : super(key: key);
+class PageSliderBarPage extends StatelessWidget {
+  const PageSliderBarPage({Key key}) : super(key: key);
 
   static const String _title = 'Flutter Code Sample';
 

@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/provider/db_progress.dart';
 import 'package:flutter_app/provider/progress.dart';
 import 'package:flutter_app/provider/upgrade_Info.dart';
 import 'package:flutter_app/route/router.dart';
+import 'package:flutter_app/util/f_log.dart';
 import 'package:flutter_app/util/view_size_utils.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:oktoast/oktoast.dart';
@@ -11,8 +13,11 @@ import 'package:provider/provider.dart';
 final RouteObserver<PageRoute> routeObserver = RouteObserver();
 final GlobalKey<NavigatorState> navigatorState = GlobalKey();
 BuildContext appContext;
+
 void main() {
   // Stetho.initialize();
+  debugPrint = (String message, {int wrapWidth}) =>debugPrintSynchronously(message, wrapWidth: wrapWidth);
+
   runApp(new MyAPP());
 }
 
@@ -25,10 +30,15 @@ class MyAPP extends StatefulWidget {
 
 class MyState<MyApp> extends State {
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+    FLog("debugPrint\tssss\n\n\n dd");
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return MultiProvider(
-      providers:[
+      providers: [
         ChangeNotifierProvider.value(value: Progress()),
         ChangeNotifierProvider.value(value: AppProgress()),
         ChangeNotifierProvider.value(value: UpgradeInfo())
@@ -38,6 +48,14 @@ class MyState<MyApp> extends State {
           routes: PagerRouter.routes,
           navigatorKey: navigatorState,
           title: "ss",
+          theme: ThemeData(
+            pageTransitionsTheme: PageTransitionsTheme(
+              builders: <TargetPlatform, PageTransitionsBuilder>{
+                TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+                TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+              },
+            ),
+          ),
           home: new Page(),
           // 路由拦截！
           onGenerateRoute: (RouteSettings settings) {
@@ -78,23 +96,29 @@ class Page extends StatelessWidget {
       appBar: AppBar(
         title: Text("flutter 学习"),
       ),
-      body: Column(
-        children: <Widget>[
-          _getItem(context,"状态管理",PagerRouter.stateManager),
-          _getItem(context,"PageView",PagerRouter.pages),
-          _getItem(context,"子线程下载",PagerRouter.threadUpdate1),
-          _getItem(context,"输入框",PagerRouter.inputText),
-          _getItem(context,"定位",PagerRouter.location),
-          _getItem(context,"seekbar",PagerRouter.slider),
-          _getItem(context,"序列化",PagerRouter.serial),
-          _getItem(context,"alert",PagerRouter.alert),
-          _getItem(context,"pres列表",PagerRouter.pres),
-        ],
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              _getItem(context, "状态管理", PagerRouter.stateManager),
+              _getItem(context, "PageView", PagerRouter.pages),
+              _getItem(context, "子线程下载", PagerRouter.threadUpdate1),
+              _getItem(context, "输入框", PagerRouter.inputText),
+              _getItem(context, "定位", PagerRouter.location),
+              _getItem(context, "seekbar", PagerRouter.slider),
+              _getItem(context, "序列化", PagerRouter.serial),
+              _getItem(context, "alert", PagerRouter.alert),
+              _getItem(context, "pres列表", PagerRouter.pres),
+              _getItem(context, "阴影", PagerRouter.shader),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  _getItem(BuildContext context,String name, String pushName) {
+  _getItem(BuildContext context, String name, String pushName) {
     return Container(
       alignment: Alignment.center,
       margin: EdgeInsets.only(top: 25),

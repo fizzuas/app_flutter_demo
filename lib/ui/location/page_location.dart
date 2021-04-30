@@ -18,9 +18,7 @@ class _GeoLocatorWidgetState extends State<GeoLocatorWidget> {
   @override
   void initState() {
     super.initState();
-    // 测试序列化
-    AppPosition position=AppPosition(longitude:"11",latitude: "22");
-    print("测试序列化"+position.toJson().toString());
+
   }
 
   @override

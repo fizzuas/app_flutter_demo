@@ -50,7 +50,7 @@ class _CommonTitleViewState extends State<CommonTitleView> {
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.arrow_back),
+                          icon: Icon(Icons.arrow_back,color: Colors.black45,),
                           onPressed: () {
                             Navigator.pop(context);
                           },

@@ -4,12 +4,12 @@ import 'package:flutter_app/base/_base_widget.dart';
 import 'package:flutter_app/ui/title/common_titleview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Pres extends StatefulWidget {
+class PagePres extends StatefulWidget {
   @override
-  _PresState createState() => _PresState();
+  _PagePresState createState() => _PagePresState();
 }
 
-class _PresState extends BaseWidgetState<Pres> {
+class _PagePresState extends BaseWidgetState<PagePres> {
   @override
   void initData() {}
 
