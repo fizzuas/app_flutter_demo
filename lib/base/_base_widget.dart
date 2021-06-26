@@ -51,7 +51,7 @@ abstract class BaseWidgetState<T extends StatefulWidget> extends State<T>
                 ],
               )
               ),
-          resizeToAvoidBottomPadding: true,
+          resizeToAvoidBottomInset: true,
         ),
        );
   }
